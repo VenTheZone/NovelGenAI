@@ -8,6 +8,9 @@ import React from 'react';
     const ApiKeyLabel = styled.label`
       display: block;
       margin-bottom: 5px;
+      font-family: 'Orbitron', sans-serif;
+      color: var(--neon-pink);
+      text-shadow: 0 0 5px var(--neon-pink);
     `;
 
     function ApiKeyInput({ apiKey, setApiKey }) {

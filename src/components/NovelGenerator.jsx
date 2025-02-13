@@ -8,9 +8,17 @@ import React, { useState, useEffect } from 'react';
       overflow-y: auto;
     `;
 
+    const InputLabel = styled.label`
+      display: block;
+      margin-bottom: 5px;
+      font-family: 'Orbitron', sans-serif;
+      color: var(--neon-pink);
+      text-shadow: 0 0 5px var(--neon-pink);
+    `;
+
     const PromptInput = styled.textarea`
       width: 100%;
-      min-height: 100px;
+      min-height: 120px;
       margin-bottom: 20px;
     `;
 
@@ -23,6 +31,12 @@ import React, { useState, useEffect } from 'react';
       overflow-y: auto;
       max-height: 400px;
       border-radius: 10px;
+    `;
+
+    const ButtonContainer = styled.div`
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
     `;
 
     const GenerateButton = styled.button`
@@ -45,25 +59,19 @@ import React, { useState, useEffect } from 'react';
       }
     `;
 
-    const SaveButton = styled.button`
-      background: transparent;
-      border: 2px solid var(--neon-pink);
+    const SaveButton = styled(GenerateButton)`
+      border-color: var(--neon-pink);
       color: var(--neon-pink);
-      padding: 10px 20px;
-      font-family: 'Orbitron', sans-serif;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border-radius: 5px;
-      margin-left: 10px; /* Add some space between buttons */
       &:hover {
         background: var(--neon-pink);
-        color: var(--dark-bg);
         box-shadow: 0 0 15px var(--neon-pink);
       }
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
+    `;
+
+    const GeneratingText = styled.span`
+      font-family: 'Orbitron', sans-serif;
+      color: var(--neon-blue);
+      margin-left: 10px;
     `;
 
     function NovelGenerator({ character, chapters, onChapterGenerated, onChapterSaved }) {
@@ -72,11 +80,10 @@ import React, { useState, useEffect } from 'react';
       const [isLoading, setIsLoading] = useState(false);
       const [apiKey, setApiKey] = useState('');
       const [chapterTitle, setChapterTitle] = useState('');
-      const [isGenerated, setIsGenerated] = useState(false); // Track if content has been generated
+      const [isGenerated, setIsGenerated] = useState(false);
 
       useEffect(() => {
-          // Reset isGenerated when a new chapter is added
-          setIsGenerated(false);
+        setIsGenerated(false);
       }, [chapters]);
 
       const generateNovel = async () => {
@@ -108,7 +115,7 @@ import React, { useState, useEffect } from 'react';
             headers: {
               "Authorization": `Bearer ${apiKey}`,
               "HTTP-Referer": "http://localhost:5173",
-              "X-Title": "Cyberpunk Novel Generator",
+              "X-Title": "NovelGenAI",
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -131,7 +138,7 @@ import React, { useState, useEffect } from 'react';
 
           const data = await response.json();
           setOutput(data.choices[0].message.content);
-          setIsGenerated(true); // Set to true after generation
+          setIsGenerated(true);
 
         } catch (error) {
           console.error('Error:', error);
@@ -142,37 +149,51 @@ import React, { useState, useEffect } from 'react';
       };
 
       const handleSaveChapter = () => {
-          if (output) {
-              onChapterSaved({ title: chapterTitle, content: output }); // Use onChapterSaved
-              setOutput(''); // Clear output after saving
-          }
+        if (output && chapterTitle) {
+          onChapterSaved({ title: chapterTitle, content: output });
+          setOutput('');
+          setIsGenerated(false);
+        }
       };
 
       return (
         <Container>
           <ApiKeyInput apiKey={apiKey} setApiKey={setApiKey} />
+
+          <InputLabel htmlFor="chapterTitle">Chapter Title:</InputLabel>
           <input
             className="cyberpunk-input"
             type="text"
+            id="chapterTitle"
             placeholder="Enter Chapter Title"
             value={chapterTitle}
             onChange={(e) => setChapterTitle(e.target.value)}
           />
+
+          <InputLabel htmlFor="roadmap">Story Roadmap/Prompt:</InputLabel>
           <PromptInput
             className="cyberpunk-input"
+            id="roadmap"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Enter your story roadmap..."
+            placeholder="Enter your story roadmap - be as detailed as possible!"
           />
-          <GenerateButton
-            onClick={generateNovel}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Generating...' : 'Generate Chapter'}
-          </GenerateButton>
-          <SaveButton onClick={handleSaveChapter} disabled={!isGenerated}>
-            Save Chapter
-          </SaveButton>
+          <ButtonContainer>
+            <GenerateButton
+              onClick={generateNovel}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Generating...' : 'Generate Chapter'}
+            </GenerateButton>
+            <SaveButton
+              onClick={handleSaveChapter}
+              disabled={!isGenerated || isLoading}
+            >
+              Save Chapter
+            </SaveButton>
+            {isLoading && <GeneratingText>Generating...</GeneratingText>}
+          </ButtonContainer>
+
           <Output>{output}</Output>
         </Container>
       );

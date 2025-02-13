@@ -157,32 +157,39 @@ import React, { useState } from 'react';
       const [selectedChapter, setSelectedChapter] = useState(null);
       const [showLibrary, setShowLibrary] = useState(false);
 
-        const handleChapterGenerated = (newChapter) => {
-        //setChapters([...chapters, newChapter]); // Don't add here, add on save
+      const handleChapterGenerated = (newChapter) => {
+        // No direct action, chapter added on save
       };
 
       const handleChapterSaved = (newChapter) => {
         setChapters([...chapters, newChapter]);
-      }
+        setSelectedChapter(newChapter); // Auto-select the newly saved chapter
+      };
 
       const handleChapterSelect = (chapter) => {
         setSelectedChapter(chapter);
-        setShowLibrary(false);
       };
 
       const handleDeleteChapter = (index) => {
         const updatedChapters = chapters.filter((_, i) => i !== index);
         setChapters(updatedChapters);
+        if (selectedChapter && selectedChapter.title === chapters[index].title) {
+          setSelectedChapter(null);
+        }
       };
 
       const handleRenameChapter = (index, newTitle) => {
-          const updatedChapters = chapters.map((chapter, i) => {
-            if (i === index) {
-              return { ...chapter, title: newTitle };
-            }
-            return chapter;
-          });
-          setChapters(updatedChapters);
+        const updatedChapters = chapters.map((chapter, i) => {
+          if (i === index) {
+            return { ...chapter, title: newTitle };
+          }
+          return chapter;
+        });
+        setChapters(updatedChapters);
+
+        if (selectedChapter && selectedChapter.title === chapters[index].title) {
+          setSelectedChapter(updatedChapters[index]);
+        }
       };
 
       return (

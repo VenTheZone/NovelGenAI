@@ -1,4 +1,4 @@
-# NovelGenAI - Cyberpunk Novel Generator
+# NovelGenAI - Novel Generator
 
     NovelGenAI is a web application that leverages the OpenRouter API and the power of AI (specifically, Google's Gemini Pro model) to help you generate a cyberpunk-themed novel.  It allows you to define a character, provide chapter roadmaps, and maintain context across multiple chapters, resulting in a more coherent and engaging story.
 

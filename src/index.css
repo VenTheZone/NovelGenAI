@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;500&display=swap');
+
+    :root {
+      --neon-blue: #00f0ff;
+      --neon-pink: #ff00ff;
+      --dark-bg: #0d0d0d;
+      /* Removed glow, as it's now handled by keyframes */
+    }

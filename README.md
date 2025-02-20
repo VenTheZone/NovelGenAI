@@ -92,4 +92,3 @@
       *   Export functionality (e.g., to text file).
       *   In-place chapter editing.
       *   Saving and loading entire novel projects.
-    </file>
